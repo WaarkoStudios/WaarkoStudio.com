@@ -1,0 +1,129 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <title>Waarko Studio | Story-Driven PC Game Development Studio</title>
+
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta name="robots" content="index, follow">
+
+  <!-- Open Graph -->
+  <meta property="og:title" content="Waarko Studio">
+  <meta property="og:description" content="Story-driven AAA-inspired PC game studio.">
+  <meta property="og:type" content="website">
+  <meta property="og:image" content="https://waarkostudios.github.io/WaarkoStudio.com/Logo.png">
+  <meta property="og:url" content="https://waarkostudios.github.io/WaarkoStudio.com">
+
+  <!-- Twitter -->
+  <meta name="twitter:card" content="summary_large_image">
+  <meta name="twitter:title" content="Waarko Studio">
+  <meta name="twitter:description" content="Story-driven PC game studio">
+
+  <!-- Favicon -->
+  <link rel="icon" type="image/png" href="Logo2.png">
+
+  <!-- Structured Data -->
+  <script type="application/ld+json">
+  {
+    "@context": "https://schema.org",
+    "@type": "Organization",
+    "name": "Waarko Studio",
+    "url": "https://waarkostudios.github.io/WaarkoStudio.com",
+    "logo": "https://waarkostudios.github.io/WaarkoStudio.com/Logo.png",
+    "sameAs": [
+      "https://www.instagram.com/waarkostudio",
+      "https://youtube.com/@waarkostudio"
+    ],
+    "description": "Waarko Studio develops story-driven AAA-inspired PC games including The Button, Warhead Origin, Dual, Voss and Vales, and more."
+  }
+  </script>
+
+  <style>
+    body {
+      margin: 0;
+      background: #05050f;
+      color: #e6e6f0;
+      font-family: system-ui, -apple-system, "Segoe UI", Roboto, sans-serif;
+      height: 100vh;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      text-align: center;
+      padding: 0 20px;
+    }
+    #status p {
+      opacity: 0.7;
+      font-size: 0.95rem;
+      margin: 0 0 0.5rem;
+    }
+    #links a {
+      display: inline-block;
+      margin-top: 1rem;
+      margin-right: 0.6rem;
+      padding: 0.7rem 1.6rem;
+      border-radius: 8px;
+      background: #1a1a2e;
+      border: 1px solid #3a3a5a;
+      color: #e6e6f0;
+      text-decoration: none;
+      font-size: 0.95rem;
+      transition: background 0.2s ease;
+    }
+    #links a:hover {
+      background: #2a2a4a;
+    }
+  </style>
+</head>
+<body>
+  <!--
+    This page checks whether home.html and sitemap.html actually exist
+    before doing anything with them:
+    - If home.html exists, redirect there immediately (normal case).
+    - If home.html is missing but sitemap.html exists, show only a Sitemap link.
+    - If neither exists, show a simple "site is being built" message
+      instead of a blank screen or a dead link.
+  -->
+  <div id="status">
+    <p>Loading Waarko Studio…</p>
+  </div>
+  <div id="links"></div>
+
+  <script>
+    function fileExists(path) {
+      return fetch(path, { method: 'HEAD' })
+        .then(res => res.ok)
+        .catch(() => false);
+    }
+
+    async function init() {
+      const statusEl = document.getElementById('status');
+      const linksEl = document.getElementById('links');
+
+      const [hasHome, hasSitemap] = await Promise.all([
+        fileExists('home.html'),
+        fileExists('sitemap.html')
+      ]);
+
+      if (hasHome) {
+        // Normal case: redirect straight to home.html
+        window.location.href = 'home.html';
+        return;
+      }
+
+      // home.html missing — show whatever fallback links are actually valid
+      statusEl.innerHTML = '<p>Waarko Studio is still being set up.</p>';
+
+      if (hasSitemap) {
+        const link = document.createElement('a');
+        link.href = 'sitemap.html';
+        link.textContent = 'View Sitemap';
+        linksEl.appendChild(link);
+      } else {
+        statusEl.innerHTML += '<p>Please check back soon.</p>';
+      }
+    }
+
+    init();
+  </script>
+</body>
+</html>
