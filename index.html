@@ -54,11 +54,13 @@
     #status p {
       opacity: 0.7;
       font-size: 0.95rem;
-      margin: 0 0 0.5rem;
+      margin: 0 0 1rem;
     }
     #links a {
-      display: inline-block;
-      margin-top: 1rem;
+      display: inline-flex;
+      align-items: center;
+      gap: 0.4rem;
+      margin-top: 0.4rem;
       margin-right: 0.6rem;
       padding: 0.7rem 1.6rem;
       border-radius: 8px;
@@ -67,21 +69,37 @@
       color: #e6e6f0;
       text-decoration: none;
       font-size: 0.95rem;
-      transition: background 0.2s ease;
+      transition: background 0.2s ease, border-color 0.2s ease, box-shadow 0.2s ease;
     }
     #links a:hover {
       background: #2a2a4a;
+    }
+    /* Highlighted state, applied if the redirect is taking too long */
+    #links a.highlight {
+      background: #3a2a6e;
+      border-color: #8b6ef0;
+      box-shadow: 0 0 14px rgba(139, 110, 240, 0.5);
+    }
+    #links a.highlight .arrow {
+      display: inline-block;
+      animation: nudge 1s ease-in-out infinite;
+    }
+    @keyframes nudge {
+      0%, 100% { transform: translateX(0); }
+      50% { transform: translateX(4px); }
     }
   </style>
 </head>
 <body>
   <!--
-    This page checks whether home.html and sitemap.html actually exist
-    before doing anything with them:
-    - If home.html exists, redirect there immediately (normal case).
-    - If home.html is missing but sitemap.html exists, show only a Sitemap link.
-    - If neither exists, show a simple "site is being built" message
-      instead of a blank screen or a dead link.
+    Behavior:
+    - If home.html exists, redirect there immediately.
+    - The Sitemap button is shown right away if sitemap.html exists, but stays
+      unobtrusive (plain styling) at first.
+    - If the redirect to home.html takes longer than 2.5s to fire (slow network,
+      file missing, etc.), the Sitemap button gets highlighted with an arrow
+      so there's an obvious next step instead of a blank wait.
+    - If neither home.html nor sitemap.html exist, show a simple status message.
   -->
   <div id="status">
     <p>Loading Waarko Studio…</p>
@@ -104,22 +122,32 @@
         fileExists('sitemap.html')
       ]);
 
+      let sitemapLink = null;
+      if (hasSitemap) {
+        sitemapLink = document.createElement('a');
+        sitemapLink.href = 'sitemap.html';
+        sitemapLink.innerHTML = 'View Sitemap <span class="arrow">&rarr;</span>';
+        linksEl.appendChild(sitemapLink);
+      }
+
       if (hasHome) {
-        // Normal case: redirect straight to home.html
+        // Give the redirect a couple seconds; if it hasn't fired by then,
+        // highlight the Sitemap button so visitors aren't left waiting blindly.
+        const highlightTimer = setTimeout(() => {
+          if (sitemapLink) sitemapLink.classList.add('highlight');
+        }, 2500);
+
         window.location.href = 'home.html';
+        // (highlightTimer naturally never matters once navigation succeeds)
         return;
       }
 
-      // home.html missing — show whatever fallback links are actually valid
+      // home.html missing
       statusEl.innerHTML = '<p>Waarko Studio is still being set up.</p>';
-
-      if (hasSitemap) {
-        const link = document.createElement('a');
-        link.href = 'sitemap.html';
-        link.textContent = 'View Sitemap';
-        linksEl.appendChild(link);
-      } else {
+      if (!hasSitemap) {
         statusEl.innerHTML += '<p>Please check back soon.</p>';
+      } else if (sitemapLink) {
+        sitemapLink.classList.add('highlight');
       }
     }
 
