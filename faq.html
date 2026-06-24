@@ -38,22 +38,6 @@
 
     body.loaded { opacity: 1; }
 
-    canvas#bgCanvas {
-      position: fixed;
-      inset: 0;
-      z-index: 0;
-      pointer-events: none;
-    }
-
-    /* Dark overlay so text stays readable */
-    .bg-overlay {
-      position: fixed;
-      inset: 0;
-      z-index: 1;
-      pointer-events: none;
-      background: radial-gradient(ellipse at center, rgba(5,5,15,0.45) 0%, rgba(5,5,15,0.75) 100%);
-    }
-
     header {
       background: rgba(7,7,26,0.9);
       backdrop-filter: blur(12px);
@@ -234,8 +218,6 @@
   </style>
 </head>
 <body>
-  <canvas id="bgCanvas"></canvas>
-  <div class="bg-overlay"></div>
 
   <header>
     <a href="home.html">Home</a>
@@ -419,140 +401,7 @@
       });
     });
 
-    // ── BLUE SAPPHIRE HEXAGON VORTEX BACKGROUND ───────────────
-    (function() {
-      const canvas = document.getElementById('bgCanvas');
-      const ctx = canvas.getContext('2d');
-      let W, H, cx, cy;
-      let time = 0;
-
-      const RINGS = 14;        // number of hexagonal rings
-      const PTS_PER_RING = 120; // particles per ring
-      const TOTAL = RINGS * PTS_PER_RING;
-
-      // Pre-allocate particle data (no GC in loop)
-      const px = new Float32Array(TOTAL);
-      const py = new Float32Array(TOTAL);
-      const palpha = new Float32Array(TOTAL);
-      const phue = new Float32Array(TOTAL);
-
-      function resize() {
-        W = canvas.width = window.innerWidth;
-        H = canvas.height = window.innerHeight;
-        cx = W / 2;
-        cy = H / 2;
-      }
-
-      // Hexagon SDF — returns distance from point to hexagon edge
-      // r = ring radius, angle = angular position on ring
-      function hexX(r, t) {
-        // Snap angle to hexagon edge
-        const sector = Math.floor(t / (Math.PI / 3));
-        const localT = t - sector * (Math.PI / 3);
-        const edgeT = localT - Math.PI / 6;
-        return r * Math.cos(edgeT) / Math.cos(Math.PI / 6);
-      }
-
-      function getHexPoint(r, t) {
-        const sides = 6;
-        const sectorAngle = (Math.PI * 2) / sides;
-        const sector = Math.floor(t / sectorAngle);
-        const localT = t - sector * sectorAngle;
-        const blend = localT / sectorAngle;
-        const a1 = sector * sectorAngle;
-        const a2 = (sector + 1) * sectorAngle;
-        const x = r * (Math.cos(a1) * (1 - blend) + Math.cos(a2) * blend);
-        const y = r * (Math.sin(a1) * (1 - blend) + Math.sin(a2) * blend);
-        return { x, y };
-      }
-
-      function draw() {
-        ctx.clearRect(0, 0, W, H);
-        time += 0.004; // slow, cinematic rotation
-
-        // Scale vortex to viewport — outermost ring fills ~80% of smaller dimension
-        const maxR = Math.min(W, H) * 0.46;
-
-        for (let ring = 0; ring < RINGS; ring++) {
-          // Rings go from center outward; inner rings smaller and brighter
-          const ringFrac = (ring + 1) / RINGS;           // 0..1 outer
-          const r = ringFrac * maxR;
-
-          // Depth tilt — inner rings appear to recede (shrink slightly)
-          const depthScale = 0.55 + ringFrac * 0.45;
-          const scaleX = depthScale;
-          const scaleY = depthScale * 0.62; // flatten for 3D perspective
-
-          // Rotation offset per ring — creates vortex tunnel feel
-          const rotOffset = time * (1.0 - ringFrac * 0.7) + ring * 0.18;
-
-          // Color: inner rings bright cyan-white, outer rings deep blue→purple
-          const hue = 190 + ringFrac * 80; // cyan(190) → purple-blue(270)
-          const lightness = 0.85 - ringFrac * 0.45; // bright center, dim outer
-          const sat = 1.0;
-          const alpha = (1.0 - ringFrac * 0.5) * 0.7; // fade outer rings
-
-          for (let p = 0; p < PTS_PER_RING; p++) {
-            const t = (p / PTS_PER_RING) * Math.PI * 2 + rotOffset;
-            const hp = getHexPoint(r, t);
-
-            // Add subtle noise/scatter for the dense particle look
-            const noiseAmt = r * 0.035;
-            const nx = hp.x * scaleX + (Math.sin(t * 7.3 + ring + time * 2) * noiseAmt);
-            const ny = hp.y * scaleY + (Math.cos(t * 5.1 + ring - time * 1.5) * noiseAmt);
-
-            // Occasional bright sparkle particles
-            const sparkle = (Math.sin(p * 0.37 + ring * 1.9 + time * 3) > 0.92) ? 1.0 : 0.0;
-            const finalAlpha = alpha + sparkle * 0.5;
-            const finalL = lightness + sparkle * 0.2;
-
-            const idx = ring * PTS_PER_RING + p;
-            px[idx] = cx + nx;
-            py[idx] = cy + ny;
-            palpha[idx] = finalAlpha;
-            phue[idx] = hue;
-
-            // Draw particle
-            ctx.beginPath();
-            ctx.arc(px[idx], py[idx], sparkle > 0 ? 1.8 : 0.9, 0, Math.PI * 2);
-            ctx.fillStyle = `hsla(${hue},${sat * 100}%,${finalL * 100}%,${Math.min(finalAlpha, 1)})`;
-            ctx.fill();
-          }
-
-          // Draw faint ring connection lines for depth
-          if (ring > 0) {
-            ctx.beginPath();
-            for (let p = 0; p <= PTS_PER_RING; p++) {
-              const t = (p / PTS_PER_RING) * Math.PI * 2 + rotOffset;
-              const hp = getHexPoint(r, t);
-              const nx = cx + hp.x * scaleX;
-              const ny = cy + hp.y * scaleY;
-              if (p === 0) ctx.moveTo(nx, ny);
-              else ctx.lineTo(nx, ny);
-            }
-            ctx.strokeStyle = `hsla(${hue},100%,${lightness * 100}%,${alpha * 0.18})`;
-            ctx.lineWidth = 0.4;
-            ctx.stroke();
-          }
-        }
-
-        // Central glow — bright core
-        const grd = ctx.createRadialGradient(cx, cy, 0, cx, cy, maxR * 0.12);
-        grd.addColorStop(0, 'rgba(180,240,255,0.22)');
-        grd.addColorStop(0.5, 'rgba(0,180,255,0.06)');
-        grd.addColorStop(1, 'rgba(0,0,0,0)');
-        ctx.beginPath();
-        ctx.arc(cx, cy, maxR * 0.12, 0, Math.PI * 2);
-        ctx.fillStyle = grd;
-        ctx.fill();
-
-        requestAnimationFrame(draw);
-      }
-
-      window.addEventListener('resize', resize);
-      resize();
-      draw();
-    })();
-  </script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/three.js/r128/three.min.js"></script>
+  <script src="bg.js"></script>
 </body>
 </html>
