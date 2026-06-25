@@ -1,0 +1,348 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>Suggestions - Waarko Studio</title>
+  <link rel="icon" href="Logo2.png" type="image/png">
+  <link href="https://fonts.googleapis.com/css2?family=Orbitron:wght@400;700;900&family=Rajdhani:wght@300;400;600&display=swap" rel="stylesheet">
+  <style>
+    :root {
+      --bg: #05050f;
+      --cyan: #00d4ff;
+      --blue: #4a9eff;
+      --purple: #8b5cf6;
+      --glow-cyan: 0 0 20px rgba(0,212,255,0.4);
+      --text: #e0e8ff;
+      --muted: #6b7a9e;
+    }
+    * { margin:0; padding:0; box-sizing:border-box; }
+    body {
+      font-family: 'Rajdhani', sans-serif;
+      /* Translucent, slightly blurred dark background instead of bg.js vortex —
+         this page renders inside a small popup box, not full screen, so a heavy
+         3D background would clash. */
+      background-color: rgba(10,10,30,0.55);
+      backdrop-filter: blur(10px);
+      color: var(--text);
+      min-height: 100vh;
+      overflow-x: hidden;
+      opacity: 0;
+      transition: opacity 0.4s ease;
+    }
+    body.loaded { opacity: 1; }
+
+    .page-hero { text-align: center; padding: 48px 24px 32px; position: relative; z-index: 2; }
+    .page-eyebrow { font-family:'Orbitron',monospace; font-size:0.6em; letter-spacing:0.4em; color:var(--cyan); text-transform:uppercase; margin-bottom:14px; }
+    .page-hero h1 {
+      font-family: 'Orbitron', monospace;
+      font-size: clamp(1.4em,3.5vw,2.4em);
+      font-weight: 900;
+      background: linear-gradient(135deg,#ffffff,var(--cyan));
+      -webkit-background-clip: text;
+      -webkit-text-fill-color: transparent;
+      background-clip: text;
+      letter-spacing: 0.06em;
+      margin-bottom: 16px;
+    }
+    .page-hero .tagline { font-size:1.05em; font-weight:300; color:var(--muted); }
+
+    .divider { position:relative; z-index:2; height:1px; background:linear-gradient(90deg,transparent,rgba(0,212,255,0.2),transparent); max-width:900px; margin:0 auto; }
+
+    .form-wrap { position:relative; z-index:2; max-width:580px; margin:0 auto; padding:40px 24px 56px; }
+
+    .field { margin-bottom:28px; }
+    .field-label {
+      font-family:'Orbitron',monospace;
+      font-size:0.58em;
+      letter-spacing:0.22em;
+      color:var(--cyan);
+      text-transform:uppercase;
+      margin-bottom:8px;
+      display:flex;
+      align-items:center;
+      gap:10px;
+      flex-wrap:wrap;
+    }
+    .field-label .opt {
+      font-family:'Rajdhani',sans-serif;
+      font-size:1.5em;
+      letter-spacing:0.04em;
+      color:var(--muted);
+      text-transform:none;
+      font-weight:300;
+    }
+    .field-hint {
+      font-size:0.9em;
+      font-weight:300;
+      color:var(--muted);
+      margin-bottom:10px;
+      line-height:1.5;
+      max-height:40px;
+      overflow:hidden;
+      opacity:0.75;
+      transition:max-height 0.3s ease, opacity 0.3s ease, margin 0.3s ease;
+    }
+    .field.has-value .field-hint { max-height:0; opacity:0; margin-bottom:0; }
+
+    input[type="text"],
+    input[type="email"],
+    textarea {
+      width:100%;
+      background:rgba(10,10,30,0.7);
+      border:1px solid rgba(0,212,255,0.18);
+      border-radius:6px;
+      padding:14px 18px;
+      font-family:'Rajdhani',sans-serif;
+      font-size:1.05em;
+      font-weight:400;
+      color:var(--text);
+      outline:none;
+      transition:border-color 0.3s, box-shadow 0.3s;
+      resize:none;
+    }
+    input::placeholder, textarea::placeholder { color:transparent; }
+    input:focus, textarea:focus {
+      border-color:rgba(0,212,255,0.5);
+      box-shadow:0 0 0 3px rgba(0,212,255,0.07);
+    }
+    textarea { min-height:150px; line-height:1.7; }
+
+    .char-count {
+      text-align:right;
+      font-size:0.72em;
+      font-family:'Orbitron',monospace;
+      color:var(--muted);
+      margin-top:6px;
+      letter-spacing:0.05em;
+      transition:color 0.2s;
+    }
+    .char-count.warn { color:#ffaa00; }
+
+    .submit-row { display:flex; justify-content:center; margin-top:10px; }
+    .btn-submit {
+      padding:14px 44px;
+      background:linear-gradient(135deg,var(--blue),var(--purple));
+      color:#fff;
+      font-family:'Orbitron',monospace;
+      font-size:0.7em;
+      font-weight:700;
+      letter-spacing:0.14em;
+      border:none;
+      border-radius:4px;
+      text-transform:uppercase;
+      cursor:pointer;
+      box-shadow:0 0 24px rgba(74,158,255,0.3);
+      transition:box-shadow 0.3s, transform 0.2s, opacity 0.2s;
+      display:flex;
+      align-items:center;
+      gap:10px;
+    }
+    .btn-submit:hover:not(:disabled) {
+      box-shadow:0 0 40px rgba(74,158,255,0.6),0 0 80px rgba(139,92,246,0.3);
+      transform:translateY(-2px);
+    }
+    .btn-submit:disabled { opacity:0.38; cursor:not-allowed; }
+
+    .spinner {
+      width:13px; height:13px;
+      border:2px solid rgba(255,255,255,0.3);
+      border-top-color:#fff;
+      border-radius:50%;
+      animation:spin 0.7s linear infinite;
+      display:none;
+    }
+    .btn-submit.loading .spinner { display:block; }
+    .btn-submit.loading .btn-text { opacity:0.6; }
+    @keyframes spin { to { transform:rotate(360deg); } }
+
+    .error-msg {
+      text-align:center;
+      color:#ff6b6b;
+      font-size:0.88em;
+      font-weight:300;
+      margin-top:14px;
+      min-height:18px;
+    }
+
+    .success-msg { display:none; text-align:center; padding:48px 24px; position:relative; z-index:2; }
+    .success-msg.visible { display:block; }
+    .success-icon {
+      width:52px; height:52px;
+      border:2px solid var(--cyan);
+      border-radius:50%;
+      display:flex; align-items:center; justify-content:center;
+      margin:0 auto 20px;
+      box-shadow:var(--glow-cyan);
+    }
+    .success-icon svg { width:22px; height:22px; stroke:var(--cyan); fill:none; stroke-width:2.5; stroke-linecap:round; stroke-linejoin:round; }
+    .success-msg h2 { font-family:'Orbitron',monospace; font-size:clamp(1.1em,3vw,1.8em); font-weight:700; color:#fff; margin-bottom:10px; }
+    .success-msg p { font-size:1em; font-weight:300; color:var(--muted); line-height:1.8; }
+  </style>
+</head>
+<body>
+
+  <script>
+    // ── DIRECT-ACCESS GUARD ───────────────────────────────────
+    // This page is only meant to be opened inside the popup iframe
+    // (via popup.js / openPopup()). If someone visits this URL
+    // directly in their browser (window.self === window.top means
+    // this page IS the top-level window, i.e. not inside an iframe),
+    // redirect them to home.html instead of letting them view it
+    // as a standalone page.
+    if (window.self === window.top) {
+      window.location.href = 'home.html';
+    }
+  </script>
+
+  <div class="page-hero">
+    <p class="page-eyebrow">Community</p>
+    <h1>Suggestions</h1>
+    <p class="tagline">Have an idea? Share it — we read everything.</p>
+  </div>
+
+  <div class="divider"></div>
+
+  <div class="form-wrap">
+
+    <div class="success-msg" id="successMsg">
+      <div class="success-icon">
+        <svg viewBox="0 0 24 24"><polyline points="20 6 9 17 4 12"/></svg>
+      </div>
+      <h2>Suggestion Received</h2>
+      <p>Thank you for sharing your idea.<br>We read every single one.</p>
+    </div>
+
+    <div id="suggestionForm">
+
+      <div class="field" id="fieldName">
+        <div class="field-label">
+          01 — Name
+          <span class="opt">(Optional — only if you want to share)</span>
+        </div>
+        <div class="field-hint">Only if you want to share your name with us</div>
+        <input type="text" id="inputName" autocomplete="off" />
+      </div>
+
+      <div class="field" id="fieldEmail">
+        <div class="field-label">
+          02 — Email
+          <span class="opt">(Optional)</span>
+        </div>
+        <div class="field-hint">Only if you want to know when we add your suggestion — or why we can't</div>
+        <input type="email" id="inputEmail" autocomplete="off" />
+      </div>
+
+      <div class="field" id="fieldSuggestion">
+        <div class="field-label">03 — Suggestion</div>
+        <textarea id="inputSuggestion" maxlength="1000"></textarea>
+        <div class="char-count" id="charCount">0 / 1000</div>
+      </div>
+
+      <div class="submit-row">
+        <button class="btn-submit" id="btnSubmit" disabled>
+          <span class="spinner"></span>
+          <span class="btn-text">Send Suggestion</span>
+        </button>
+      </div>
+      <div class="error-msg" id="errorMsg"></div>
+
+    </div>
+  </div>
+
+  <script>
+    const SUPABASE_URL      = 'https://eoqfanrazcwsifixrhtw.supabase.co';
+    const SUPABASE_ANON_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImVvcWZhbnJhemN3c2lmaXhyaHR3Iiwicm9sZSI6ImFub24iLCJpYXQiOjE3ODA2MzE0MjEsImV4cCI6MjA5NjIwNzQyMX0.sUweVfTCxarKaforAYXT55PlTxbsDr-5phtzDDxcDNE';
+
+    document.addEventListener('DOMContentLoaded', () => {
+      document.body.classList.add('loaded');
+
+      const inputName       = document.getElementById('inputName');
+      const inputEmail      = document.getElementById('inputEmail');
+      const inputSuggestion = document.getElementById('inputSuggestion');
+      const fieldName       = document.getElementById('fieldName');
+      const fieldEmail      = document.getElementById('fieldEmail');
+      const fieldSuggestion = document.getElementById('fieldSuggestion');
+      const charCount       = document.getElementById('charCount');
+      const btnSubmit       = document.getElementById('btnSubmit');
+      const errorMsg        = document.getElementById('errorMsg');
+      const successMsg      = document.getElementById('successMsg');
+      const suggestionForm  = document.getElementById('suggestionForm');
+
+      function trackField(input, fieldEl) {
+        input.addEventListener('input', () => {
+          fieldEl.classList.toggle('has-value', input.value.trim().length > 0);
+          validate();
+        });
+      }
+
+      trackField(inputName, fieldName);
+      trackField(inputEmail, fieldEmail);
+      trackField(inputSuggestion, fieldSuggestion);
+
+      inputSuggestion.addEventListener('input', () => {
+        const len = inputSuggestion.value.length;
+        charCount.textContent = len + ' / 1000';
+        charCount.classList.toggle('warn', len > 800);
+        validate();
+      });
+
+      function validate() {
+        btnSubmit.disabled = inputSuggestion.value.trim().length === 0;
+      }
+
+      btnSubmit.addEventListener('click', async () => {
+        const suggestion = inputSuggestion.value.trim();
+        if (!suggestion) return;
+
+        btnSubmit.disabled = true;
+        btnSubmit.classList.add('loading');
+        errorMsg.textContent = '';
+
+        const payload = {
+          suggestion,
+          name:  inputName.value.trim()  || null,
+          email: inputEmail.value.trim() || null
+        };
+
+        try {
+          const res = await fetch(SUPABASE_URL + '/rest/v1/suggestions', {
+            method: 'POST',
+            headers: {
+              'Content-Type':  'application/json',
+              'apikey':        SUPABASE_ANON_KEY,
+              'Authorization': 'Bearer ' + SUPABASE_ANON_KEY,
+              'Prefer':        'return=minimal'
+            },
+            body: JSON.stringify(payload)
+          });
+
+          if (!res.ok) {
+            const err = await res.json().catch(() => ({}));
+            throw new Error(err.message || 'Submission failed');
+          }
+
+          // Success
+          suggestionForm.style.opacity = '0';
+          suggestionForm.style.transition = 'opacity 0.3s';
+          setTimeout(() => {
+            suggestionForm.style.display = 'none';
+            successMsg.classList.add('visible');
+            // Let popup.js know to close this popup after a short delay
+            setTimeout(() => {
+              try {
+                if (window.__closeParentPopup) window.__closeParentPopup();
+              } catch(e) {}
+            }, 2000);
+          }, 300);
+
+        } catch (err) {
+          errorMsg.textContent = 'Something went wrong. Please try again.';
+          btnSubmit.disabled = false;
+          btnSubmit.classList.remove('loading');
+        }
+      });
+    });
+  </script>
+</body>
+</html>
