@@ -19,19 +19,20 @@ function createPopup(filename) {
   overlay.style.cssText = `
     position: fixed;
     inset: 0;
-    background: rgba(0,0,0,0.85);
+    background: rgba(0,0,0,0.12);
     z-index: 9999;
     display: flex;
     align-items: center;
     justify-content: center;
-    backdrop-filter: blur(8px);
+    backdrop-filter: blur(4px);
     opacity: 0;
     transition: opacity 0.3s ease;
   `;
 
   const box = document.createElement('div');
   box.style.cssText = `
-    background: #0a0a1e;
+    background: rgba(10,10,30,0.55);
+    backdrop-filter: blur(14px);
     border: 1px solid rgba(0,212,255,0.3);
     border-radius: 16px;
     width: 90%;
