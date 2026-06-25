@@ -138,9 +138,17 @@
   const SCROLL_SPD = 16;    // units per second (how fast rings fly at you)
   let animId       = null;  // requestAnimationFrame handle, so we can cancel/restart cleanly
 
+  // Intro ramp: on first load, rings should grow/spread into place rather
+  // than snapping instantly to their full spread depth/radius.
+  const INTRO_DURATION = 2.5; // seconds for the intro ramp to complete
+  let introT = 0;
+
   function tick() {
     animId = requestAnimationFrame(tick);
     t += 0.004;
+    if (introT < 1) introT = Math.min(1, introT + (1 / 60) / INTRO_DURATION);
+    // easeOutCubic for a smooth, natural-feeling settle
+    const introEase = 1 - Math.pow(1 - introT, 3);
 
     const maxR = Math.min(window.innerWidth, window.innerHeight) * 0.36;
 
@@ -148,7 +156,9 @@
       const frac = ring / (RINGS - 1);          // 0 = near camera, 1 = deep
 
       // Radius shrinks with depth → perspective convergence
-      const r = 14 + (1 - frac) * (maxR - 14);
+      // introEase scales radius from compressed (near 0) up to full spread,
+      // so on load the vortex visibly grows outward instead of snapping in.
+      const r = (14 + (1 - frac) * (maxR - 14)) * introEase;
 
       // Z: rings scroll toward camera and wrap
       const zBase   = -TUNNEL_D * frac;
@@ -202,6 +212,7 @@
     if (animId !== null) {
       cancelAnimationFrame(animId);
     }
+    introT = 0;
     tick();
   }, 50000);
 
