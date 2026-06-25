@@ -136,9 +136,10 @@
   let t            = 0;
   const TUNNEL_D   = 340;   // total tunnel depth in world units
   const SCROLL_SPD = 16;    // units per second (how fast rings fly at you)
+  let animId       = null;  // requestAnimationFrame handle, so we can cancel/restart cleanly
 
   function tick() {
-    requestAnimationFrame(tick);
+    animId = requestAnimationFrame(tick);
     t += 0.004;
 
     const maxR = Math.min(window.innerWidth, window.innerHeight) * 0.36;
@@ -192,5 +193,16 @@
   }
 
   tick();
+
+  // ── 7. SAFETY-NET RESTART ────────────────────────────────
+  // If the animation ever silently stalls (browser throttling, a missed
+  // requestAnimationFrame callback, tab visibility quirks, etc.), this
+  // forces a clean restart every 60 seconds so it never stays frozen.
+  setInterval(() => {
+    if (animId !== null) {
+      cancelAnimationFrame(animId);
+    }
+    tick();
+  }, 50000);
 
 })();
