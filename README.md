@@ -8,8 +8,11 @@ Waarko Studio was founded in 2025 with a vision to push the boundaries of intera
 
 ## Games
 
-### Warhead Origin *(In Development)*
-A story-driven action AAA game set in the Bornahead Cinematic Universe. Built around cinematic storytelling and immersive gameplay.
+### The Button *(In Development)*
+A story-driven Sci-Fi PC game set in the Bornahead Cinematic Universe. Our first and flagship title.
+
+### Warhead Origin *(Coming Afterwards)*
+A story-driven action game set in the Bornahead Cinematic Universe. Built around cinematic storytelling and immersive gameplay.
 
 ## Universe
 
@@ -19,12 +22,15 @@ A story-driven action AAA game set in the Bornahead Cinematic Universe. Built ar
 
 Built with HTML, CSS, and JavaScript. Hosted on GitHub Pages.
 
-**Live:** https://waarkostudio.github.io/WaarkoStudio.com
+**Live:** https://waarkostudios.github.io/WaarkoStudio.com
 
 ## Socials
 
 - Instagram: https://www.instagram.com/waarkostudio
 - YouTube: https://youtube.com/@waarkostudio
+- Discord: https://discord.gg/uS3P4eFHQ7
+- Reddit: https://www.reddit.com/u/WaarkoStudio
+- itch.io: https://waarkostudio.itch.io
 
 ## License
 
