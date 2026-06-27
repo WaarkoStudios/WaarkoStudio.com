@@ -1,0 +1,677 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>Universe - Waarko Studio</title>
+
+  <!-- Favicon -->
+  <link rel="icon" type="image/png" href="/favicon/favicon-96x96.png" sizes="96x96" />
+  <link rel="icon" type="image/svg+xml" href="/favicon/favicon.svg" />
+  <link rel="shortcut icon" href="/favicon/favicon.ico" />
+  <link rel="apple-touch-icon" sizes="180x180" href="/favicon/apple-touch-icon.png" />
+  <link rel="manifest" href="/favicon/site.webmanifest" />
+
+  <link href="https://fonts.googleapis.com/css2?family=Orbitron:wght@400;700;900&family=Rajdhani:wght@300;400;600&display=swap" rel="stylesheet">
+  <style>
+    :root {
+      --bg: #05050f;
+      --cyan: #00d4ff;
+      --blue: #4a9eff;
+      --purple: #8b5cf6;
+      --glow-cyan: 0 0 20px rgba(0,212,255,0.4);
+      --glow-purple: 0 0 20px rgba(139,92,246,0.4);
+      --text: #e0e8ff;
+      --muted: #6b7a9e;
+    }
+
+    * { margin: 0; padding: 0; box-sizing: border-box; }
+
+    body {
+      font-family: 'Rajdhani', sans-serif;
+      background-color: var(--bg);
+      color: var(--text);
+      min-height: 100vh;
+      overflow-x: hidden;
+      opacity: 0;
+      transition: opacity 0.4s ease;
+    }
+
+    body.loaded { opacity: 1; }
+
+    header {
+      background: rgba(7,7,26,0.9);
+      backdrop-filter: blur(12px);
+      border-bottom: 1px solid rgba(0,212,255,0.15);
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      gap: 24px;
+      padding: 14px 24px;
+      position: sticky;
+      top: 0;
+      z-index: 1000;
+    }
+
+    header a {
+      font-family: 'Orbitron', monospace;
+      font-size: 0.62em;
+      font-weight: 700;
+      letter-spacing: 0.1em;
+      color: var(--muted);
+      text-decoration: none;
+      text-transform: uppercase;
+      transition: color 0.3s, text-shadow 0.3s;
+      white-space: nowrap;
+    }
+
+    header a:hover, header a.active {
+      color: var(--cyan);
+      text-shadow: var(--glow-cyan);
+    }
+
+    .page-hero {
+      position: relative;
+      z-index: 1;
+      text-align: center;
+      padding: 80px 24px 60px;
+    }
+
+    .page-hero img.logo {
+      width: 120px;
+      max-width: 35vw;
+      margin-bottom: 28px;
+      filter: drop-shadow(0 0 20px rgba(74,158,255,0.4));
+      animation: float 4s ease-in-out infinite;
+    }
+
+    @keyframes float {
+      0%, 100% { transform: translateY(0); }
+      50% { transform: translateY(-10px); }
+    }
+
+    .page-eyebrow {
+      font-family: 'Orbitron', monospace;
+      font-size: 0.6em;
+      letter-spacing: 0.4em;
+      color: var(--cyan);
+      text-transform: uppercase;
+      margin-bottom: 14px;
+    }
+
+    .page-hero h1 {
+      font-family: 'Orbitron', monospace;
+      font-size: clamp(1.6em, 4vw, 3em);
+      font-weight: 900;
+      background: linear-gradient(135deg, #ffffff, var(--cyan));
+      -webkit-background-clip: text;
+      -webkit-text-fill-color: transparent;
+      background-clip: text;
+      letter-spacing: 0.06em;
+      margin-bottom: 16px;
+    }
+
+    .page-hero .tagline {
+      font-size: 1.1em;
+      font-weight: 300;
+      color: var(--muted);
+    }
+
+    .divider {
+      position: relative;
+      z-index: 1;
+      height: 1px;
+      background: linear-gradient(90deg, transparent, rgba(0,212,255,0.2), transparent);
+      max-width: 900px;
+      margin: 0 auto;
+    }
+
+    .section {
+      position: relative;
+      z-index: 1;
+      max-width: 900px;
+      margin: 0 auto;
+      padding: 70px 24px;
+    }
+
+    .section-label {
+      font-family: 'Orbitron', monospace;
+      font-size: 0.58em;
+      letter-spacing: 0.4em;
+      color: var(--purple);
+      text-transform: uppercase;
+      margin-bottom: 12px;
+    }
+
+    .section h2 {
+      font-family: 'Orbitron', monospace;
+      font-size: clamp(1.3em, 3vw, 2em);
+      font-weight: 700;
+      color: #fff;
+      margin-bottom: 28px;
+    }
+
+    .section h2 span {
+      background: linear-gradient(90deg, var(--cyan), var(--purple));
+      -webkit-background-clip: text;
+      -webkit-text-fill-color: transparent;
+      background-clip: text;
+    }
+
+    .bcu-card {
+      background: rgba(139,92,246,0.06);
+      border: 1px solid rgba(139,92,246,0.3);
+      border-radius: 12px;
+      padding: 44px 40px;
+      position: relative;
+      overflow: hidden;
+    }
+
+    .bcu-card::before {
+      content: '';
+      position: absolute;
+      top: 0; left: 0; right: 0;
+      height: 2px;
+      background: linear-gradient(90deg, var(--purple), var(--cyan), var(--purple));
+    }
+
+    .bcu-card p {
+      font-size: 1.1em;
+      font-weight: 300;
+      color: var(--muted);
+      line-height: 1.9;
+    }
+
+    .bcu-card p strong { color: var(--text); font-weight: 600; }
+
+    .timeline {
+      display: flex;
+      flex-direction: column;
+      gap: 0;
+    }
+
+    .timeline-item {
+      display: flex;
+      gap: 24px;
+      align-items: flex-start;
+      padding: 28px 0;
+      border-bottom: 1px solid rgba(0,212,255,0.08);
+    }
+
+    .timeline-item:last-child { border-bottom: none; }
+
+    .timeline-content { flex: 1; }
+
+    .timeline-tag {
+      display: inline-block;
+      font-family: 'Orbitron', monospace;
+      font-size: 0.5em;
+      letter-spacing: 0.2em;
+      padding: 3px 10px;
+      border-radius: 2px;
+      text-transform: uppercase;
+      margin-bottom: 10px;
+    }
+
+    .tag-dev { color: var(--cyan); border: 1px solid rgba(0,212,255,0.3); }
+    .tag-coming { color: var(--purple); border: 1px solid rgba(139,92,246,0.3); }
+
+    .game-title-block { line-height: 1.05; }
+
+    .game-title-block .line1 {
+      display: block;
+      font-family: 'Orbitron', monospace;
+      font-size: clamp(1.2em, 3vw, 1.8em);
+      font-weight: 900;
+      color: #ffffff;
+      letter-spacing: 0.06em;
+      text-transform: uppercase;
+    }
+
+    .game-title-block .line2 {
+      display: block;
+      font-family: 'Orbitron', monospace;
+      font-size: clamp(1.2em, 3vw, 1.8em);
+      font-weight: 900;
+      letter-spacing: 0.06em;
+      text-transform: uppercase;
+      background: linear-gradient(90deg, var(--cyan), var(--purple));
+      -webkit-background-clip: text;
+      -webkit-text-fill-color: transparent;
+      background-clip: text;
+    }
+
+    .line2-origin { margin-left: 4.2em; }
+    .line2-eov { margin-left: 3.2em; }
+
+    .game-single {
+      font-family: 'Orbitron', monospace;
+      font-size: clamp(1.2em, 3vw, 1.8em);
+      font-weight: 900;
+      letter-spacing: 0.06em;
+      text-transform: uppercase;
+      background: linear-gradient(90deg, var(--cyan), var(--purple));
+      -webkit-background-clip: text;
+      -webkit-text-fill-color: transparent;
+      background-clip: text;
+    }
+
+    .timeline-more {
+      padding: 16px 0;
+      display: flex;
+      align-items: center;
+      gap: 16px;
+    }
+
+    .timeline-more .line {
+      flex: 1;
+      height: 1px;
+      background: linear-gradient(90deg, transparent, rgba(0,212,255,0.4), transparent);
+    }
+
+    .timeline-more span {
+      font-family: 'Orbitron', monospace;
+      font-size: 0.5em;
+      letter-spacing: 0.3em;
+      color: rgba(0,212,255,0.5);
+      text-transform: uppercase;
+      white-space: nowrap;
+    }
+
+    .closing-card {
+      background: rgba(10,10,30,0.8);
+      border: 1px solid rgba(0,212,255,0.15);
+      border-radius: 12px;
+      padding: 48px 40px;
+      text-align: center;
+      position: relative;
+      overflow: hidden;
+    }
+
+    .closing-card::before {
+      content: '';
+      position: absolute;
+      top: 0; left: 0; right: 0;
+      height: 2px;
+      background: linear-gradient(90deg, var(--cyan), var(--purple));
+    }
+
+    .closing-card h2 {
+      font-family: 'Orbitron', monospace;
+      font-size: clamp(1.4em, 3vw, 2em);
+      font-weight: 900;
+      background: linear-gradient(135deg, #ffffff, var(--cyan));
+      -webkit-background-clip: text;
+      -webkit-text-fill-color: transparent;
+      background-clip: text;
+      margin-bottom: 16px;
+      letter-spacing: 0.06em;
+    }
+
+    .closing-card p {
+      font-size: 1.1em;
+      font-weight: 300;
+      color: var(--muted);
+      line-height: 1.8;
+      max-width: 560px;
+      margin: 0 auto;
+    }
+
+    .btn-primary {
+      padding: 14px 36px;
+      background: linear-gradient(135deg, var(--blue), var(--purple));
+      color: #fff;
+      font-family: 'Orbitron', monospace;
+      font-size: 0.72em;
+      font-weight: 700;
+      letter-spacing: 0.12em;
+      text-decoration: none;
+      border-radius: 4px;
+      text-transform: uppercase;
+      box-shadow: 0 0 24px rgba(74,158,255,0.3);
+      transition: box-shadow 0.3s, transform 0.2s;
+      border: none;
+      cursor: pointer;
+      display: inline-block;
+    }
+
+    .btn-primary:hover {
+      box-shadow: 0 0 40px rgba(74,158,255,0.6), 0 0 80px rgba(139,92,246,0.3);
+      transform: translateY(-2px);
+    }
+
+    .suggest-wrap {
+      position: relative;
+      z-index: 1;
+      max-width: 900px;
+      margin: 0 auto;
+      padding: 70px 24px 0;
+      text-align: center;
+    }
+
+    .suggest-label {
+      font-family: 'Orbitron', monospace;
+      font-size: 0.6em;
+      letter-spacing: 0.4em;
+      color: var(--purple);
+      text-transform: uppercase;
+      margin-bottom: 12px;
+    }
+
+    .suggest-wrap h2 {
+      font-family: 'Orbitron', monospace;
+      font-size: clamp(1.4em, 3vw, 2.2em);
+      font-weight: 700;
+      color: #fff;
+      margin-bottom: 12px;
+    }
+
+    .suggest-wrap h2 span {
+      background: linear-gradient(90deg, var(--cyan), var(--purple));
+      -webkit-background-clip: text;
+      -webkit-text-fill-color: transparent;
+      background-clip: text;
+    }
+
+    .suggest-wrap p {
+      font-size: 1.1em;
+      font-weight: 300;
+      color: var(--muted);
+      margin-bottom: 28px;
+    }
+
+    .socials-wrap {
+      position: relative;
+      z-index: 1;
+      max-width: 900px;
+      margin: 0 auto;
+      padding: 70px 24px 80px;
+      text-align: center;
+    }
+
+    .socials { display: flex; gap: 16px; justify-content: center; flex-wrap: wrap; }
+
+    .social-btn {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      padding: 12px 28px;
+      background: rgba(10,10,30,0.8);
+      border: 1px solid rgba(0,212,255,0.2);
+      border-radius: 6px;
+      color: var(--text);
+      font-family: 'Orbitron', monospace;
+      font-size: 0.65em;
+      font-weight: 700;
+      letter-spacing: 0.12em;
+      text-decoration: none;
+      text-transform: uppercase;
+      transition: border-color 0.3s, box-shadow 0.3s, transform 0.2s;
+    }
+
+    .social-btn:hover {
+      border-color: var(--cyan);
+      box-shadow: var(--glow-cyan);
+      transform: translateY(-2px);
+      color: var(--cyan);
+    }
+
+    .social-icon { width: 18px; height: 18px; fill: currentColor; }
+
+    footer {
+      position: relative;
+      z-index: 1;
+      border-top: 1px solid rgba(0,212,255,0.1);
+      padding: 32px 24px;
+      text-align: center;
+    }
+
+    footer p {
+      font-family: 'Orbitron', monospace;
+      font-size: 0.6em;
+      letter-spacing: 0.2em;
+      color: var(--muted);
+      text-transform: uppercase;
+    }
+  </style>
+</head>
+<body>
+
+  <header>
+    <a href="home.html">Home</a>
+    <a href="about.html">About</a>
+    <a href="universe.html" class="active">Universe</a>
+    <a href="blog.html">Blog</a>
+    <a href="faq.html">FAQ</a>
+  </header>
+
+  <div class="page-hero">
+    <img src="Logo.png" alt="Waarko Studio Logo" class="logo" />
+    <p class="page-eyebrow">The World</p>
+    <h1>Bornahead Universe</h1>
+    <p class="tagline">A universe born ahead of our own</p>
+  </div>
+
+  <div class="divider"></div>
+
+  <!-- WHAT IS BORNAHEAD -->
+  <div class="section">
+    <p class="section-label">The World</p>
+    <h2>What is <span>Bornahead</span></h2>
+    <div class="bcu-card">
+      <p>
+        <strong>Bornahead</strong> is a world that is ahead of ours — more advanced in technology, in systems, in power. A civilization that has evolved far beyond what we know, with its own history, politics, conflicts, and stories. A universe that is, in every sense, <strong>born ahead of our own</strong>.<br><br>
+        The <strong>Bornahead Cinematic Universe (BCU)</strong> is the connected story world that every Waarko Studio game exists within. No single main character. No single villain. A living world where multiple stories unfold across multiple games — all connected, all part of something larger than any one title.
+      </p>
+    </div>
+  </div>
+
+  <div class="divider"></div>
+
+  <!-- CHRONOLOGICAL ORDER -->
+  <div class="section">
+    <p class="section-label">Story Timeline</p>
+    <h2>Chronological <span>Order</span></h2>
+    <div class="timeline">
+
+      <div class="timeline-more">
+        <div class="line"></div>
+        <span>More Prequels</span>
+        <div class="line"></div>
+      </div>
+
+      <div class="timeline-item">
+        <div class="timeline-content">
+          <span class="timeline-tag tag-coming">Coming Soon</span>
+          <div class="game-title-block">
+            <span class="game-single">Voss and Vales</span>
+          </div>
+        </div>
+      </div>
+
+      <div class="timeline-item">
+        <div class="timeline-content">
+          <span class="timeline-tag tag-coming">Coming Soon</span>
+          <div class="game-title-block">
+            <span class="game-single">Dual and Hitman</span>
+          </div>
+        </div>
+      </div>
+
+      <div class="timeline-item">
+        <div class="timeline-content">
+          <span class="timeline-tag tag-dev">In Development</span>
+          <div class="game-title-block">
+            <span class="line1">Warhead</span>
+            <span class="line2 line2-origin">Origin</span>
+          </div>
+        </div>
+      </div>
+
+      <div class="timeline-item">
+        <div class="timeline-content">
+          <span class="timeline-tag tag-coming">Coming Soon</span>
+          <div class="game-title-block">
+            <span class="line1">Warhead</span>
+            <span class="line2 line2-eov">End of Vales</span>
+          </div>
+        </div>
+      </div>
+
+      <div class="timeline-item">
+        <div class="timeline-content">
+          <span class="timeline-tag tag-coming">Coming Soon</span>
+          <div class="game-title-block">
+            <span class="game-single">Dual Against the World</span>
+          </div>
+        </div>
+      </div>
+
+      <div class="timeline-more">
+        <div class="line"></div>
+        <span>More Sequels</span>
+        <div class="line"></div>
+      </div>
+
+    </div>
+  </div>
+
+  <div class="divider"></div>
+
+  <!-- RELEASE ORDER -->
+  <div class="section">
+    <p class="section-label">Play Order</p>
+    <h2>Release <span>Order</span></h2>
+    <div class="timeline">
+
+      <div class="timeline-item">
+        <div class="timeline-content">
+          <span class="timeline-tag tag-dev">In Development</span>
+          <div class="game-title-block">
+            <span class="line1">Warhead</span>
+            <span class="line2 line2-origin">Origin</span>
+          </div>
+        </div>
+      </div>
+
+      <div class="timeline-item">
+        <div class="timeline-content">
+          <span class="timeline-tag tag-coming">Coming Soon</span>
+          <div class="game-title-block">
+            <span class="line1">Warhead</span>
+            <span class="line2 line2-eov">End of Vales</span>
+          </div>
+        </div>
+      </div>
+
+      <div class="timeline-item">
+        <div class="timeline-content">
+          <span class="timeline-tag tag-coming">Coming Soon</span>
+          <div class="game-title-block">
+            <span class="game-single">Voss and Vales</span>
+          </div>
+        </div>
+      </div>
+
+      <div class="timeline-item">
+        <div class="timeline-content">
+          <span class="timeline-tag tag-coming">Coming Soon</span>
+          <div class="game-title-block">
+            <span class="game-single">Dual and Hitman</span>
+          </div>
+        </div>
+      </div>
+
+      <div class="timeline-item">
+        <div class="timeline-content">
+          <span class="timeline-tag tag-coming">Coming Soon</span>
+          <div class="game-title-block">
+            <span class="game-single">Dual Against the World</span>
+          </div>
+        </div>
+      </div>
+
+      <div class="timeline-more">
+        <div class="line"></div>
+        <span>More Coming</span>
+        <div class="line"></div>
+      </div>
+
+    </div>
+  </div>
+
+  <div class="divider"></div>
+
+  <!-- CLOSING -->
+  <div class="section">
+    <div class="closing-card">
+      <h2>This Is Just The Beginning</h2>
+      <p>The Bornahead Cinematic Universe is a living world. More games, more stories, more characters are coming. Every title is a piece of something much larger. Voss and Vales has a prequel. Dual Against the World has sequels. The story is long — we know where it goes. Now we build the road to get there.</p>
+    </div>
+  </div>
+
+  <div class="divider"></div>
+
+  <div class="suggest-wrap">
+    <p class="suggest-label">Community</p>
+    <h2>Share Your <span>Ideas</span></h2>
+    <p>Have a suggestion for Waarko Studio or the Bornahead Universe? We want to hear it.</p>
+    <button class="btn-primary" onclick="openPopup('suggestions.html')">Suggestions</button>
+  </div>
+
+  <div class="divider"></div>
+
+  <div class="socials-wrap">
+    <p class="suggest-label">Follow Us</p>
+    <h2 style="font-family:'Orbitron',monospace;font-size:clamp(1.4em,3vw,2.2em);font-weight:700;color:#fff;margin-bottom:32px;">Stay <span style="background:linear-gradient(90deg,var(--cyan),var(--purple));-webkit-background-clip:text;-webkit-text-fill-color:transparent;background-clip:text;">Connected</span></h2>
+    <div class="socials">
+      <a href="https://www.instagram.com/waarkostudio" target="_blank" class="social-btn">
+        <svg class="social-icon" viewBox="0 0 24 24"><path d="M12 2.163c3.204 0 3.584.012 4.85.07 3.252.148 4.771 1.691 4.919 4.919.058 1.265.069 1.645.069 4.849 0 3.205-.012 3.584-.069 4.849-.149 3.225-1.664 4.771-4.919 4.919-1.266.058-1.644.07-4.85.07-3.204 0-3.584-.012-4.849-.07-3.26-.149-4.771-1.699-4.919-4.92-.058-1.265-.07-1.644-.07-4.849 0-3.204.013-3.583.07-4.849.149-3.227 1.664-4.771 4.919-4.919 1.266-.057 1.645-.069 4.849-.069zm0-2.163c-3.259 0-3.667.014-4.947.072-4.358.2-6.78 2.618-6.98 6.98-.059 1.281-.073 1.689-.073 4.948 0 3.259.014 3.668.072 4.948.2 4.358 2.618 6.78 6.98 6.98 1.281.058 1.689.072 4.948.072 3.259 0 3.668-.014 4.948-.072 4.354-.2 6.782-2.618 6.979-6.98.059-1.28.073-1.689.073-4.948 0-3.259-.014-3.667-.072-4.947-.196-4.354-2.617-6.78-6.979-6.98-1.281-.059-1.69-.073-4.949-.073zm0 5.838c-3.403 0-6.162 2.759-6.162 6.162s2.759 6.163 6.162 6.163 6.162-2.759 6.162-6.163c0-3.403-2.759-6.162-6.162-6.162zm0 10.162c-2.209 0-4-1.79-4-4 0-2.209 1.791-4 4-4s4 1.791 4 4c0 2.21-1.791 4-4 4zm6.406-11.845c-.796 0-1.441.645-1.441 1.44s.645 1.44 1.441 1.44c.795 0 1.439-.645 1.439-1.44s-.644-1.44-1.439-1.44z"/></svg>
+        Instagram
+      </a>
+      <a href="https://youtube.com/@waarkostudio" target="_blank" class="social-btn">
+        <svg class="social-icon" viewBox="0 0 24 24"><path d="M23.495 6.205a3.007 3.007 0 0 0-2.088-2.088c-1.87-.501-9.396-.501-9.396-.501s-7.507-.01-9.396.501A3.007 3.007 0 0 0 .527 6.205a31.247 31.247 0 0 0-.522 5.805 31.247 31.247 0 0 0 .522 5.783 3.007 3.007 0 0 0 2.088 2.088c1.868.502 9.396.502 9.396.502s7.506 0 9.396-.502a3.007 3.007 0 0 0 2.088-2.088 31.247 31.247 0 0 0 .5-5.783 31.247 31.247 0 0 0-.5-5.805zM9.609 15.601V8.408l6.264 3.602z"/></svg>
+        YouTube
+      </a>
+    </div>
+    <div class="socials" style="margin-top:16px;">
+      <a href="https://www.reddit.com/u/WaarkoStudio/s/mpU9tP7jAN" target="_blank" class="social-btn">
+        <svg class="social-icon" viewBox="0 0 24 24"><path d="M12 0C5.373 0 0 5.373 0 12s5.373 12 12 12 12-5.373 12-12S18.627 0 12 0zm5.01 12.876c.058.211.09.434.09.665 0 2.624-3.06 4.748-6.838 4.748-3.778 0-6.837-2.124-6.837-4.748 0-.23.032-.453.09-.664a1.687 1.687 0 0 1-.665-1.343 1.71 1.71 0 0 1 1.708-1.708c.45 0 .857.176 1.16.46 1.137-.815 2.7-1.336 4.434-1.382l.825-3.886a.297.297 0 0 1 .355-.23l2.733.582a1.19 1.19 0 1 1-.087.535l-2.452-.522-.74 3.483c1.722.054 3.27.575 4.4 1.385.302-.288.71-.465 1.163-.465a1.71 1.71 0 0 1 1.708 1.708c0 .55-.252 1.04-.647 1.358zM9.25 13.5a1.25 1.25 0 1 0 2.5 0 1.25 1.25 0 0 0-2.5 0zm6.998 0a1.25 1.25 0 1 0-2.5 0 1.25 1.25 0 0 0 2.5 0zm-.97 2.747c-.07-.071-.183-.075-.265-.024a4.793 4.793 0 0 1-2.512.633 4.793 4.793 0 0 1-2.512-.633.197.197 0 0 0-.265.024.187.187 0 0 0 .024.262 5.184 5.184 0 0 0 2.753.69 5.184 5.184 0 0 0 2.753-.69.187.187 0 0 0 .024-.262z"/></svg>
+        Reddit
+      </a>
+      <a href="https://waarkostudio.itch.io" target="_blank" class="social-btn">
+        <svg class="social-icon" viewBox="0 0 24 24"><path d="M2.215 4.515C3.605 3.16 5.53 1.4 6.34 1.4c1.43 0 4.5.182 5.66.182 1.16 0 4.23-.182 5.66-.182.81 0 2.735 1.76 4.125 3.115C23.115 5.83 24 7.353 24 8.273c0 1.13-.69 2.27-1.78 2.27-.06 0-.135-.005-.21-.014.013.13.02.26.02.39 0 2.79-2.06 3.93-3.6 3.93-1.32 0-2.05-.6-2.5-1.16-.45.56-1.36 1.51-3 1.51-1.5 0-2.4-.74-2.93-1.46-.53.72-1.43 1.46-2.93 1.46-1.64 0-2.55-.95-3-1.51-.45.56-1.18 1.16-2.5 1.16-1.54 0-3.6-1.14-3.6-3.93 0-.13.007-.26.02-.39-.075.009-.15.014-.21.014C.69 10.543 0 9.403 0 8.273c0-.92.885-2.443 2.215-3.758zm5.385 4.97c-.93 0-1.78.41-2.36 1.07v.55c0 1.43.93 2.04 1.74 2.04.93 0 1.42-.59 1.7-1.09.04-1.45-.46-2.57-1.08-2.57zm8.8 0c-.62 0-1.12 1.12-1.08 2.57.28.5.77 1.09 1.7 1.09.81 0 1.74-.61 1.74-2.04v-.55a3.146 3.146 0 0 0-2.36-1.07z"/></svg>
+        itch.io
+      </a>
+      <a href="https://discord.gg/uS3P4eFHQ7" target="_blank" class="social-btn">
+        <svg class="social-icon" viewBox="0 0 24 24"><path d="M20.317 4.369a19.791 19.791 0 0 0-4.885-1.515.074.074 0 0 0-.079.037c-.21.375-.444.864-.608 1.249a18.27 18.27 0 0 0-5.487 0 12.64 12.64 0 0 0-.617-1.25.077.077 0 0 0-.079-.036A19.736 19.736 0 0 0 3.677 4.37a.07.07 0 0 0-.032.027C.533 9.046-.32 13.58.099 18.057a.082.082 0 0 0 .031.057 19.9 19.9 0 0 0 5.993 3.03.078.078 0 0 0 .084-.028 14.09 14.09 0 0 0 1.226-1.994.076.076 0 0 0-.041-.106 13.107 13.107 0 0 1-1.872-.892.077.077 0 0 1-.008-.128c.126-.094.252-.192.372-.292a.074.074 0 0 1 .077-.01c3.928 1.793 8.18 1.793 12.062 0a.074.074 0 0 1 .078.01c.12.099.246.198.373.292a.077.077 0 0 1-.006.127 12.3 12.3 0 0 1-1.873.893.076.076 0 0 0-.04.106c.36.698.772 1.362 1.225 1.993a.076.076 0 0 0 .084.029 19.84 19.84 0 0 0 6.002-3.03.077.077 0 0 0 .032-.054c.5-5.177-.838-9.674-3.549-13.66a.061.061 0 0 0-.031-.03zM8.02 15.331c-1.183 0-2.157-1.086-2.157-2.419 0-1.333.956-2.419 2.157-2.419 1.21 0 2.176 1.096 2.157 2.42 0 1.332-.956 2.418-2.157 2.418zm7.974 0c-1.183 0-2.157-1.086-2.157-2.419 0-1.333.955-2.419 2.157-2.419 1.21 0 2.176 1.096 2.157 2.42 0 1.332-.946 2.418-2.157 2.418Z"/></svg>
+        Discord
+      </a>
+    </div>
+  </div>
+
+  <footer>
+    <p>© 2025–2026 Waarko Studio. All rights reserved.</p>
+  </footer>
+
+  <script src="popup.js"></script>
+  <script>
+    document.addEventListener('DOMContentLoaded', () => {
+      document.body.classList.add('loaded');
+      document.querySelectorAll('a[href]').forEach(link => {
+        const href = link.getAttribute('href');
+        if (!href.startsWith('http') && !href.startsWith('mailto') && !href.startsWith('#')) {
+          link.addEventListener('click', e => {
+            e.preventDefault();
+            document.body.style.opacity = '0';
+            setTimeout(() => { window.location.href = href; }, 400);
+          });
+        }
+      });
+    });
+  </script>
+
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/three.js/r128/three.min.js"></script>
+  <script src="bg.js"></script>
+</body>
+</html>
