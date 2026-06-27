@@ -1,0 +1,538 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>About - Waarko Studio</title>
+
+  <!-- Favicon -->
+  <link rel="icon" type="image/png" href="/favicon/favicon-96x96.png" sizes="96x96" />
+  <link rel="icon" type="image/svg+xml" href="/favicon/favicon.svg" />
+  <link rel="shortcut icon" href="/favicon/favicon.ico" />
+  <link rel="apple-touch-icon" sizes="180x180" href="/favicon/apple-touch-icon.png" />
+  <link rel="manifest" href="/favicon/site.webmanifest" />
+
+  <link href="https://fonts.googleapis.com/css2?family=Orbitron:wght@400;700;900&family=Rajdhani:wght@300;400;600&display=swap" rel="stylesheet">
+  <style>
+    :root {
+      --bg: #05050f;
+      --cyan: #00d4ff;
+      --blue: #4a9eff;
+      --purple: #8b5cf6;
+      --glow-cyan: 0 0 20px rgba(0,212,255,0.4);
+      --glow-purple: 0 0 20px rgba(139,92,246,0.4);
+      --text: #e0e8ff;
+      --muted: #6b7a9e;
+    }
+
+    * { margin: 0; padding: 0; box-sizing: border-box; }
+
+    body {
+      font-family: 'Rajdhani', sans-serif;
+      background-color: var(--bg);
+      color: var(--text);
+      min-height: 100vh;
+      overflow-x: hidden;
+      opacity: 0;
+      transition: opacity 0.4s ease;
+    }
+
+    body.loaded { opacity: 1; }
+
+    header {
+      background: rgba(7,7,26,0.9);
+      backdrop-filter: blur(12px);
+      border-bottom: 1px solid rgba(0,212,255,0.15);
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      gap: 24px;
+      padding: 14px 24px;
+      position: sticky;
+      top: 0;
+      z-index: 1000;
+    }
+
+    header a {
+      font-family: 'Orbitron', monospace;
+      font-size: 0.62em;
+      font-weight: 700;
+      letter-spacing: 0.1em;
+      white-space: nowrap;
+      color: var(--muted);
+      text-decoration: none;
+      text-transform: uppercase;
+      transition: color 0.3s, text-shadow 0.3s;
+    }
+
+    header a:hover, header a.active {
+      color: var(--cyan);
+      text-shadow: var(--glow-cyan);
+    }
+
+    .page-hero {
+      position: relative;
+      z-index: 1;
+      text-align: center;
+      padding: 80px 24px 60px;
+    }
+
+    .page-hero img.logo {
+      width: 120px;
+      max-width: 35vw;
+      margin-bottom: 28px;
+      filter: drop-shadow(0 0 20px rgba(74,158,255,0.4));
+      animation: float 4s ease-in-out infinite;
+    }
+
+    @keyframes float {
+      0%, 100% { transform: translateY(0); }
+      50% { transform: translateY(-10px); }
+    }
+
+    .page-eyebrow {
+      font-family: 'Orbitron', monospace;
+      font-size: 0.6em;
+      letter-spacing: 0.4em;
+      color: var(--cyan);
+      text-transform: uppercase;
+      margin-bottom: 14px;
+    }
+
+    .page-hero h1 {
+      font-family: 'Orbitron', monospace;
+      font-size: clamp(1.6em, 4vw, 3em);
+      font-weight: 900;
+      background: linear-gradient(135deg, #ffffff, var(--cyan));
+      -webkit-background-clip: text;
+      -webkit-text-fill-color: transparent;
+      background-clip: text;
+      letter-spacing: 0.06em;
+      margin-bottom: 16px;
+    }
+
+    .tagline { font-size: 1.1em; font-weight: 300; color: var(--muted); letter-spacing: 0.08em; }
+    .tagline span { color: var(--purple); font-weight: 600; }
+
+    .divider {
+      position: relative;
+      z-index: 1;
+      height: 1px;
+      background: linear-gradient(90deg, transparent, rgba(0,212,255,0.2), transparent);
+      max-width: 900px;
+      margin: 0 auto;
+    }
+
+    .section {
+      position: relative;
+      z-index: 1;
+      max-width: 900px;
+      margin: 0 auto;
+      padding: 70px 24px;
+    }
+
+    .section-label {
+      font-family: 'Orbitron', monospace;
+      font-size: 0.58em;
+      letter-spacing: 0.4em;
+      color: var(--purple);
+      text-transform: uppercase;
+      margin-bottom: 12px;
+    }
+
+    .section h2 {
+      font-family: 'Orbitron', monospace;
+      font-size: clamp(1.3em, 3vw, 2em);
+      font-weight: 700;
+      color: #fff;
+      margin-bottom: 28px;
+    }
+
+    .section h2 span {
+      background: linear-gradient(90deg, var(--cyan), var(--purple));
+      -webkit-background-clip: text;
+      -webkit-text-fill-color: transparent;
+      background-clip: text;
+    }
+
+    .card-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 20px; }
+    @media (max-width: 600px) { .card-grid { grid-template-columns: 1fr; } }
+
+    .card {
+      background: rgba(10,10,30,0.8);
+      border: 1px solid rgba(0,212,255,0.12);
+      border-radius: 12px;
+      padding: 32px;
+      position: relative;
+      overflow: hidden;
+      transition: border-color 0.3s, box-shadow 0.3s;
+    }
+
+    .card::before {
+      content: '';
+      position: absolute;
+      top: 0; left: 0; right: 0;
+      height: 2px;
+      background: linear-gradient(90deg, var(--cyan), var(--purple));
+    }
+
+    .card:hover { border-color: rgba(0,212,255,0.3); box-shadow: 0 0 30px rgba(0,212,255,0.06); }
+
+    .card h3 {
+      font-family: 'Orbitron', monospace;
+      font-size: 0.85em;
+      font-weight: 700;
+      letter-spacing: 0.15em;
+      color: var(--cyan);
+      text-transform: uppercase;
+      margin-bottom: 14px;
+    }
+
+    .card p { font-size: 1em; font-weight: 300; color: var(--muted); line-height: 1.9; }
+
+    .universe-wrap {
+      position: relative;
+      z-index: 1;
+      max-width: 900px;
+      margin: 0 auto;
+      padding: 70px 24px 40px;
+    }
+
+    .universe-inner {
+      background: rgba(139,92,246,0.06);
+      border: 1px solid rgba(139,92,246,0.3);
+      border-radius: 12px;
+      padding: 44px 40px;
+      text-align: center;
+      position: relative;
+      overflow: hidden;
+    }
+
+    .universe-inner::before {
+      content: '';
+      position: absolute;
+      top: 0; left: 0; right: 0;
+      height: 2px;
+      background: linear-gradient(90deg, var(--purple), var(--cyan), var(--purple));
+    }
+
+    .universe-label {
+      font-family: 'Orbitron', monospace;
+      font-size: 0.58em;
+      letter-spacing: 0.5em;
+      color: var(--purple);
+      text-transform: uppercase;
+      margin-bottom: 14px;
+    }
+
+    .universe-inner h2 {
+      font-family: 'Orbitron', monospace;
+      font-size: clamp(1.2em, 3.5vw, 2.2em);
+      font-weight: 900;
+      background: linear-gradient(135deg, var(--purple), var(--cyan));
+      -webkit-background-clip: text;
+      -webkit-text-fill-color: transparent;
+      background-clip: text;
+      letter-spacing: 0.05em;
+      margin-bottom: 28px;
+    }
+
+    .universe-btn-wrap {
+      position: relative;
+      z-index: 1;
+      max-width: 900px;
+      margin: 0 auto;
+      padding: 0 24px 70px;
+      display: flex;
+      justify-content: center;
+    }
+
+    .game-section {
+      position: relative;
+      z-index: 1;
+      max-width: 900px;
+      margin: 0 auto;
+      padding: 0 24px 70px;
+    }
+
+    .game-section-label {
+      font-family: 'Orbitron', monospace;
+      font-size: 0.58em;
+      letter-spacing: 0.4em;
+      color: var(--purple);
+      text-transform: uppercase;
+      margin-bottom: 20px;
+    }
+
+    .game-card {
+      background: rgba(10,10,30,0.9);
+      border: 1px solid rgba(0,212,255,0.18);
+      border-radius: 16px;
+      padding: 50px 44px;
+      display: flex;
+      gap: 44px;
+      align-items: center;
+      position: relative;
+      overflow: hidden;
+      transition: border-color 0.3s, box-shadow 0.3s;
+      cursor: pointer;
+    }
+
+    .game-card::before {
+      content: '';
+      position: absolute;
+      top: 0; left: 0; right: 0;
+      height: 2px;
+      background: linear-gradient(90deg, var(--cyan), var(--purple));
+    }
+
+    .game-card:hover { border-color: rgba(0,212,255,0.4); box-shadow: 0 0 60px rgba(0,212,255,0.08); }
+
+    @media (max-width: 650px) {
+      .game-card { flex-direction: column; text-align: center; padding: 36px 24px; gap: 28px; }
+    }
+
+    .game-icon {
+      width: 110px;
+      min-width: 110px;
+      height: 110px;
+      object-fit: contain;
+      filter: drop-shadow(0 0 20px rgba(74,158,255,0.5));
+      border-radius: 16px;
+    }
+
+    .game-icon-placeholder {
+      width: 110px;
+      min-width: 110px;
+      height: 110px;
+      background: rgba(74,158,255,0.06);
+      border: 1px dashed rgba(0,212,255,0.25);
+      border-radius: 16px;
+      display: none;
+      align-items: center;
+      justify-content: center;
+      font-family: 'Orbitron', monospace;
+      font-size: 0.5em;
+      color: var(--muted);
+    }
+
+    .game-info { flex: 1; }
+
+    .game-tag {
+      display: inline-block;
+      font-family: 'Orbitron', monospace;
+      font-size: 0.55em;
+      letter-spacing: 0.2em;
+      color: var(--cyan);
+      border: 1px solid rgba(0,212,255,0.3);
+      border-radius: 2px;
+      padding: 4px 12px;
+      text-transform: uppercase;
+      margin-bottom: 20px;
+    }
+
+    .game-title-block { margin-bottom: 16px; line-height: 1.05; }
+
+    .game-title-block .line1 {
+      display: block;
+      font-family: 'Orbitron', monospace;
+      font-size: clamp(1.6em, 4vw, 2.6em);
+      font-weight: 900;
+      color: #ffffff;
+      letter-spacing: 0.06em;
+      text-transform: uppercase;
+    }
+
+    .game-title-block .line2 {
+      display: block;
+      font-family: 'Orbitron', monospace;
+      font-size: clamp(1.6em, 4vw, 2.6em);
+      font-weight: 900;
+      letter-spacing: 0.06em;
+      text-transform: uppercase;
+      margin-left: 4.2em;
+      background: linear-gradient(90deg, var(--cyan), var(--purple));
+      -webkit-background-clip: text;
+      -webkit-text-fill-color: transparent;
+      background-clip: text;
+    }
+
+    .game-info p { font-size: 1.05em; font-weight: 300; color: var(--muted); line-height: 1.8; }
+
+    .btn-primary {
+      padding: 14px 36px;
+      background: linear-gradient(135deg, var(--blue), var(--purple));
+      color: #fff;
+      font-family: 'Orbitron', monospace;
+      font-size: 0.72em;
+      font-weight: 700;
+      letter-spacing: 0.12em;
+      text-decoration: none;
+      border-radius: 4px;
+      text-transform: uppercase;
+      box-shadow: 0 0 24px rgba(74,158,255,0.3);
+      transition: box-shadow 0.3s, transform 0.2s;
+      border: none;
+      cursor: pointer;
+      display: inline-block;
+    }
+
+    .btn-primary:hover {
+      box-shadow: 0 0 40px rgba(74,158,255,0.6), 0 0 80px rgba(139,92,246,0.3);
+      transform: translateY(-2px);
+    }
+
+    .suggest-wrap {
+      position: relative;
+      z-index: 1;
+      max-width: 900px;
+      margin: 0 auto;
+      padding: 0 24px 80px;
+      text-align: center;
+    }
+
+    .suggest-label {
+      font-family: 'Orbitron', monospace;
+      font-size: 0.6em;
+      letter-spacing: 0.4em;
+      color: var(--purple);
+      text-transform: uppercase;
+      margin-bottom: 12px;
+    }
+
+    .suggest-wrap h2 {
+      font-family: 'Orbitron', monospace;
+      font-size: clamp(1.4em, 3vw, 2.2em);
+      font-weight: 700;
+      color: #fff;
+      margin-bottom: 12px;
+    }
+
+    .suggest-wrap h2 span {
+      background: linear-gradient(90deg, var(--cyan), var(--purple));
+      -webkit-background-clip: text;
+      -webkit-text-fill-color: transparent;
+      background-clip: text;
+    }
+
+    .suggest-wrap p {
+      font-size: 1.1em;
+      font-weight: 300;
+      color: var(--muted);
+      margin-bottom: 28px;
+    }
+
+    footer {
+      position: relative;
+      z-index: 1;
+      border-top: 1px solid rgba(0,212,255,0.1);
+      padding: 32px 24px;
+      text-align: center;
+    }
+
+    footer p {
+      font-family: 'Orbitron', monospace;
+      font-size: 0.6em;
+      letter-spacing: 0.2em;
+      color: var(--muted);
+      text-transform: uppercase;
+    }
+  </style>
+</head>
+<body>
+
+  <header>
+    <a href="home.html">Home</a>
+    <a href="about.html" class="active">About</a>
+    <a href="universe.html">Universe</a>
+    <a href="blog.html">Blog</a>
+    <a href="faq.html">FAQ</a>
+  </header>
+
+  <div class="page-hero">
+    <img src="Logo.png" alt="Waarko Studio Logo" class="logo" />
+    <p class="page-eyebrow">Who We Are</p>
+    <h1>Waarko Studio</h1>
+    <p class="tagline">Innovation in <span>Games</span> &nbsp;·&nbsp; <span>PC Games</span></p>
+  </div>
+
+  <div class="divider"></div>
+
+  <div class="section">
+    <p class="section-label">Our Foundation</p>
+    <h2>What Drives <span>Us</span></h2>
+    <div class="card-grid">
+      <div class="card">
+        <h3>Innovation</h3>
+        <p>We push the boundaries of what games can be — challenging conventions and redefining interactive entertainment one title at a time.</p>
+      </div>
+      <div class="card">
+        <h3>Creativity</h3>
+        <p>Imagination is at the heart of everything we do. Every game we make is built to fill players with excitement, wonder, and limitless possibility.</p>
+      </div>
+    </div>
+  </div>
+
+  <div class="divider"></div>
+
+  <div class="universe-wrap">
+    <p class="section-label" style="text-align:center; margin-bottom:28px;">The Universe</p>
+    <div class="universe-inner">
+      <p class="universe-label">Introducing</p>
+      <h2>Bornahead Cinematic Universe</h2>
+      <a href="universe.html" class="btn-primary">Explore Universe</a>
+    </div>
+  </div>
+
+  <div class="divider"></div>
+
+  <div class="game-section">
+    <p class="game-section-label">Upcoming Game</p>
+    <div class="game-card" onclick="openPopup('box.html')">
+      <img src="Icon.png" alt="The Button" class="game-icon"
+        onerror="this.style.display='none'; this.nextElementSibling.style.display='flex';">
+      <div class="game-icon-placeholder">ICON</div>
+      <div class="game-info">
+        <span class="game-tag">In Development</span>
+        <div class="game-title-block">
+          <span class="line1">The Button</span>
+        </div>
+        <p>A story-driven game set in the Bornahead Cinematic Universe — built around cinematic storytelling, immersive gameplay, and a world worth getting lost in.</p>
+      </div>
+    </div>
+  </div>
+
+  <div class="divider"></div>
+
+  <div class="suggest-wrap">
+    <p class="suggest-label">Community</p>
+    <h2>Share Your <span>Ideas</span></h2>
+    <p>Have a suggestion for Waarko Studio or The Button? We want to hear it.</p>
+    <button class="btn-primary" onclick="openPopup('suggestions.html')">Suggestions</button>
+  </div>
+
+  <footer>
+    <p>© 2025–2026 Waarko Studio. All rights reserved.</p>
+  </footer>
+
+  <script src="popup.js"></script>
+  <script>
+    document.addEventListener('DOMContentLoaded', () => {
+      document.body.classList.add('loaded');
+      document.querySelectorAll('a[href]').forEach(link => {
+        const href = link.getAttribute('href');
+        if (!href.startsWith('http') && !href.startsWith('mailto') && !href.startsWith('#')) {
+          link.addEventListener('click', e => {
+            e.preventDefault();
+            document.body.style.opacity = '0';
+            setTimeout(() => { window.location.href = href; }, 400);
+          });
+        }
+      });
+    });
+  </script>
+
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/three.js/r128/three.min.js"></script>
+  <script src="bg.js"></script>
+</body>
+</html>
