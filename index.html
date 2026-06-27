@@ -4,6 +4,7 @@
   <title>Waarko Studio | Story-Driven PC Game Development Studio</title>
 
   <meta charset="UTF-8">
+  <meta http-equiv="refresh" content="0; url=home.html">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <meta name="robots" content="index, follow">
 
@@ -45,119 +46,12 @@
   </script>
 
   <style>
-    body {
-      margin: 0;
-      background: #05050f;
-      color: #e6e6f0;
-      font-family: system-ui, -apple-system, "Segoe UI", Roboto, sans-serif;
-      height: 100vh;
-      display: flex;
-      align-items: center;
-      justify-content: center;
-      text-align: center;
-      padding: 0 20px;
-    }
-    #status p {
-      opacity: 0.7;
-      font-size: 0.95rem;
-      margin: 0 0 1rem;
-    }
-    #links a {
-      display: inline-flex;
-      align-items: center;
-      gap: 0.4rem;
-      margin-top: 0.4rem;
-      margin-right: 0.6rem;
-      padding: 0.7rem 1.6rem;
-      border-radius: 8px;
-      background: #1a1a2e;
-      border: 1px solid #3a3a5a;
-      color: #e6e6f0;
-      text-decoration: none;
-      font-size: 0.95rem;
-      transition: background 0.2s ease, border-color 0.2s ease, box-shadow 0.2s ease;
-    }
-    #links a:hover {
-      background: #2a2a4a;
-    }
-    /* Highlighted state, applied if the redirect is taking too long */
-    #links a.highlight {
-      background: #3a2a6e;
-      border-color: #8b6ef0;
-      box-shadow: 0 0 14px rgba(139, 110, 240, 0.5);
-    }
-    #links a.highlight .arrow {
-      display: inline-block;
-      animation: nudge 1s ease-in-out infinite;
-    }
-    @keyframes nudge {
-      0%, 100% { transform: translateX(0); }
-      50% { transform: translateX(4px); }
-    }
+    body { margin: 0; background: #05050f; }
   </style>
 </head>
 <body>
-  <!--
-    Behavior:
-    - If home.html exists, redirect there immediately.
-    - The Sitemap button is shown right away if sitemap.html exists, but stays
-      unobtrusive (plain styling) at first.
-    - If the redirect to home.html takes longer than 2.5s to fire (slow network,
-      file missing, etc.), the Sitemap button gets highlighted with an arrow
-      so there's an obvious next step instead of a blank wait.
-    - If neither home.html nor sitemap.html exist, show a simple status message.
-  -->
-  <div id="status">
-    <p>Loading Waarko Studio…</p>
-  </div>
-  <div id="links"></div>
-
   <script>
-    function fileExists(path) {
-      return fetch(path, { method: 'HEAD' })
-        .then(res => res.ok)
-        .catch(() => false);
-    }
-
-    async function init() {
-      const statusEl = document.getElementById('status');
-      const linksEl = document.getElementById('links');
-
-      const [hasHome, hasSitemap] = await Promise.all([
-        fileExists('home.html'),
-        fileExists('sitemap.html')
-      ]);
-
-      let sitemapLink = null;
-      if (hasSitemap) {
-        sitemapLink = document.createElement('a');
-        sitemapLink.href = 'sitemap.html';
-        sitemapLink.innerHTML = 'View Sitemap <span class="arrow">&rarr;</span>';
-        linksEl.appendChild(sitemapLink);
-      }
-
-      if (hasHome) {
-        // Give the redirect a couple seconds; if it hasn't fired by then,
-        // highlight the Sitemap button so visitors aren't left waiting blindly.
-        const highlightTimer = setTimeout(() => {
-          if (sitemapLink) sitemapLink.classList.add('highlight');
-        }, 2500);
-
-        window.location.href = 'home.html';
-        // (highlightTimer naturally never matters once navigation succeeds)
-        return;
-      }
-
-      // home.html missing
-      statusEl.innerHTML = '<p>Waarko Studio is still being set up.</p>';
-      if (!hasSitemap) {
-        statusEl.innerHTML += '<p>Please check back soon.</p>';
-      } else if (sitemapLink) {
-        sitemapLink.classList.add('highlight');
-      }
-    }
-
-    init();
+    window.location.href = "home.html";
   </script>
 </body>
 </html>
